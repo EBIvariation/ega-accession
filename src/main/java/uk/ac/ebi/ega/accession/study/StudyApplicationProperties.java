@@ -25,6 +25,8 @@ public class StudyApplicationProperties {
 
     private String instanceId;
 
+    private String accessionPrefix;
+
     public StudyApplicationProperties() {
     }
 
@@ -52,12 +54,21 @@ public class StudyApplicationProperties {
         this.instanceId = instanceId;
     }
 
+    public String getAccessionPrefix() {
+        return accessionPrefix;
+    }
+
+    public void setAccessionPrefix(String accessionPrefix) {
+        this.accessionPrefix = accessionPrefix;
+    }
+
     @Override
     public String toString() {
         return "StudyApplicationProperties{" +
                 "blockSize=" + blockSize +
                 ", categoryId='" + categoryId + '\'' +
                 ", instanceId='" + instanceId + '\'' +
+                ", accessionPrefix='" + accessionPrefix + '\'' +
                 '}';
     }
 }
