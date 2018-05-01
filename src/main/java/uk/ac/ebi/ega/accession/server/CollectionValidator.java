@@ -20,11 +20,13 @@ package uk.ac.ebi.ega.accession.server;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ValidationException;
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * Validator class for Collection of DTOs
@@ -36,15 +38,25 @@ public class CollectionValidator implements Validator {
     private LocalValidatorFactoryBean validator;
 
     @Override
-    public boolean supports(Class<?> clazz) {
-        return Collection.class.isAssignableFrom(clazz);
+    public boolean supports(Class<?> aClass) {
+        return Collection.class.isAssignableFrom(aClass);
     }
 
-    @Override
     public void validate(Object target, Errors errors) {
-        Collection collection = (Collection) target;
-        for (Object object : collection) {
-            ValidationUtils.invokeValidator(validator, object, errors);
+        final StringBuilder message = new StringBuilder();
+        Object[] objects = ((Collection) target).toArray();
+        for (int indexOfObjects = 0; indexOfObjects < objects.length; indexOfObjects++) {
+            Set<ConstraintViolation<Object>> constraintViolations = validator.validate(objects[indexOfObjects], new Class[0]);
+            if (constraintViolations != null && constraintViolations.size() > 0) {
+                message.append(errors.getObjectName() + "[" + indexOfObjects + "] : ");
+                constraintViolations.stream().forEach(constraintViolation -> {
+                    message.append(constraintViolation.getMessage() + "\n");
+                });
+
+            }
+        }
+        if (message.length() > 0) {
+            throw new ValidationException(message.toString());
         }
     }
 }

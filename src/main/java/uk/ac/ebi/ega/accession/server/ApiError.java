@@ -19,36 +19,46 @@ package uk.ac.ebi.ega.accession.server;
 
 import org.springframework.http.HttpStatus;
 
+import java.util.Date;
+
 public class ApiError {
 
-    private final HttpStatus status;
-    private final String message;
-    private final String debugMessage;
+    private long timestamp;
 
-    public ApiError(HttpStatus status, String message, String debugMessage) {
-        this.status = status;
+    private int status;
+
+    private String error;
+
+    private String exception;
+
+    private String message;
+
+    public ApiError(HttpStatus status, Exception ex, String message) {
+        timestamp = new Date().getTime();
+        this.status = status.value();
+        this.error = status.getReasonPhrase();
+
+        this.exception = ex.getClass().getCanonicalName();
         this.message = message;
-        this.debugMessage = debugMessage;
     }
 
-    public HttpStatus getStatus() {
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public int getStatus() {
         return status;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public String getException() {
+        return exception;
     }
 
     public String getMessage() {
         return message;
-    }
-
-    public String getDebugMessage() {
-        return debugMessage;
-    }
-
-    @Override
-    public String toString() {
-        return "ApiError{" +
-                "status=" + status +
-                ", message='" + message + '\'' +
-                ", debugMessage='" + debugMessage + '\'' +
-                '}';
     }
 }

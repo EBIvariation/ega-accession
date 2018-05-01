@@ -18,52 +18,40 @@
 package uk.ac.ebi.ega.accession.server;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import javax.validation.ValidationException;
 
 @ControllerAdvice
-public class RestExceptionHandler extends ResponseEntityExceptionHandler {
+public class RestExceptionHandler {
 
     @Autowired
     private CollectionValidator collectionValidator;
 
-    @Override
-    protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex,
-                                                                     HttpHeaders headers, HttpStatus status,
-                                                                     WebRequest request) {
-        String error = "Media Type Not Supported";
-        return buildResponseEntity(new ApiError(HttpStatus.UNSUPPORTED_MEDIA_TYPE, error, ex.getMessage()));
+    @ExceptionHandler(value = HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<ApiError> handleHttpMediaNotSupported(HttpMediaTypeNotSupportedException ex) {
+        return buildResponseEntity(HttpStatus.UNSUPPORTED_MEDIA_TYPE, ex, ex.getMessage());
     }
 
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-                                                                  HttpHeaders headers, HttpStatus status,
-                                                                  WebRequest request) {
-        String error = "Request body provided is not valid";
-        return buildResponseEntity(new ApiError(HttpStatus.BAD_REQUEST, error,
-                ex.getBindingResult().getGlobalError() != null ? ex.getBindingResult().getGlobalError().getDefaultMessage() :
-                        ex.getBindingResult().getFieldError().getDefaultMessage()));
+    @ExceptionHandler(value = ValidationException.class)
+    public ResponseEntity<ApiError> handleValidationException(ValidationException ex) {
+        return buildResponseEntity(HttpStatus.BAD_REQUEST, ex, ex.getMessage());
     }
 
-    @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
-                                                                  HttpHeaders headers, HttpStatus status,
-                                                                  WebRequest request) {
-        String error = "Request body provided is not valid";
-        return buildResponseEntity(new ApiError(HttpStatus.BAD_REQUEST, error, "Please provide accepted values"));
+    @ExceptionHandler(value = HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiError> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+        return buildResponseEntity(HttpStatus.BAD_REQUEST, ex, "Please provide accepted values");
     }
 
-    private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
-        return new ResponseEntity<>(apiError, apiError.getStatus());
+    private ResponseEntity<ApiError> buildResponseEntity(HttpStatus status, Exception ex, String message) {
+        return new ResponseEntity<>(new ApiError(status, ex, message), status);
     }
 
     @InitBinder
