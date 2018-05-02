@@ -15,9 +15,9 @@
  * limitations under the License.
  *
  */
-package uk.ac.ebi.ega.accession.study;
+package uk.ac.ebi.ega.accession.sample;
 
-public class StudyApplicationProperties {
+public class SampleApplicationProperties {
 
     private long blockSize;
 
@@ -29,7 +29,7 @@ public class StudyApplicationProperties {
 
     private String accessionLength;
 
-    public StudyApplicationProperties() {
+    public SampleApplicationProperties() {
     }
 
     public long getBlockSize() {
@@ -74,7 +74,7 @@ public class StudyApplicationProperties {
 
     @Override
     public String toString() {
-        return "StudyApplicationProperties{" +
+        return "SampleApplicationProperties{" +
                 "blockSize=" + blockSize +
                 ", categoryId='" + categoryId + '\'' +
                 ", instanceId='" + instanceId + '\'' +

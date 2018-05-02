@@ -19,18 +19,20 @@
 package uk.ac.ebi.ega.accession.sample;
 
 import uk.ac.ebi.ampt2d.commons.accession.core.BasicAccessioningService;
-import uk.ac.ebi.ampt2d.commons.accession.generators.SingleAccessionGenerator;
+import uk.ac.ebi.ampt2d.commons.accession.generators.DecoratedAccessionGenerator;
 import uk.ac.ebi.ampt2d.commons.accession.hashing.SHA1HashingFunction;
 import uk.ac.ebi.ampt2d.commons.accession.persistence.DatabaseService;
 
 public class SampleAccessioningService extends BasicAccessioningService<SampleModel, String, String> {
 
-    public SampleAccessioningService(DatabaseService<SampleModel, String, String> dbService) {
-        super(SingleAccessionGenerator.ofSHA1AccessionGenerator(new SampleModelSummaryFunction()),
+    public SampleAccessioningService(DecoratedAccessionGenerator<SampleModel, Long> decoratedAccessionGenerator,
+                                     DatabaseService<SampleModel, String, String>
+                                             dbService) {
+        super(
+                decoratedAccessionGenerator,
                 dbService,
                 new SampleModelSummaryFunction(),
-                new SHA1HashingFunction());
+                new SHA1HashingFunction()
+        );
     }
-
 }
-

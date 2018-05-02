@@ -34,6 +34,7 @@ import java.util.Arrays;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static uk.ac.ebi.ega.test.utils.TestHelper.generateSampleMap;
 
 @RunWith(SpringRunner.class)
@@ -55,6 +56,8 @@ public class SampleRestControllerTest {
         ResponseEntity<Map> response = testRestTemplate.exchange(url, HttpMethod.POST, requestEntity, Map.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(2, response.getBody().size());
+        assertTrue(response.getBody().entrySet().stream().anyMatch(accession -> accession.toString().contains
+                ("EGAN00000000000")));
     }
 
     @Test

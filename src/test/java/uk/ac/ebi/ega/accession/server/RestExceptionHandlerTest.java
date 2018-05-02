@@ -52,24 +52,25 @@ public class RestExceptionHandlerTest {
         HttpEntity<Object> requestEntity = new HttpEntity<>(Arrays.asList(fileA));
         ResponseEntity<Map> response = testRestTemplate.exchange(url, HttpMethod.POST, requestEntity, Map.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Please provide a valid hash", response.getBody().get("debugMessage"));
+        assertEquals("fileDTOList[0] : Please provide a valid hash\n", response.getBody().get("message"));
 
         requestEntity = new HttpEntity<>(Arrays.asList(fileB));
         response = testRestTemplate.exchange(url, HttpMethod.POST, requestEntity, Map.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Please provide a valid hash", response.getBody().get("debugMessage"));
+        assertEquals("fileDTOList[0] : Please provide a valid hash\n", response.getBody().get("message"));
 
         fileA = new FileDTO(HashType.MD5, null);
         requestEntity = new HttpEntity<>(Arrays.asList(fileA));
         response = testRestTemplate.exchange(url, HttpMethod.POST, requestEntity, Map.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Please provide a valid hash", response.getBody().get("debugMessage"));
+        assertEquals("fileDTOList[0] : Please provide a valid hash\n", response.getBody().get("message"));
 
         fileA = new FileDTO(null, "checksumBBBBBBBBBBBBBBBBBBBBBBBB");
         requestEntity = new HttpEntity<>(Arrays.asList(fileA));
         response = testRestTemplate.exchange(url, HttpMethod.POST, requestEntity, Map.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Please provide a hashType.Supported types :MD5,SHA1", response.getBody().get("debugMessage"));
+        assertEquals("fileDTOList[0] : Please provide a hashType.Supported types :MD5,SHA1\n",
+                response.getBody().get("message"));
 
     }
 
@@ -80,7 +81,7 @@ public class RestExceptionHandlerTest {
         ResponseEntity<Map> response = testRestTemplate.exchange(url, HttpMethod.POST, requestEntity, Map.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("Study properties should not be null", response.getBody().get("debugMessage"));
+        assertEquals("studyDTOList[0] : Study properties should not be null\n", response.getBody().get("message"));
 
     }
 

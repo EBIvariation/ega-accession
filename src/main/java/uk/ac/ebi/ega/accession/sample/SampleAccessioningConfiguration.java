@@ -15,44 +15,59 @@
  * limitations under the License.
  *
  */
-package uk.ac.ebi.ega.test.configuration;
+
+package uk.ac.ebi.ega.accession.sample;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import uk.ac.ebi.ampt2d.commons.accession.autoconfigure.EnableSpringDataContiguousIdService;
 import uk.ac.ebi.ampt2d.commons.accession.generators.DecoratedAccessionGenerator;
 import uk.ac.ebi.ampt2d.commons.accession.generators.monotonic.MonotonicAccessionGenerator;
 import uk.ac.ebi.ampt2d.commons.accession.persistence.monotonic.service.ContiguousIdBlockService;
-import uk.ac.ebi.ega.accession.sample.SampleAccessioningService;
-import uk.ac.ebi.ega.accession.sample.SampleModel;
 import uk.ac.ebi.ega.accession.sample.persistence.SampleAccessioningDatabaseService;
 import uk.ac.ebi.ega.accession.sample.persistence.SampleAccessioningRepository;
 
-@TestConfiguration
+@Configuration
 @EnableSpringDataContiguousIdService
 @EntityScan({"uk.ac.ebi.ega.accession.sample.persistence"})
-@EnableJpaRepositories(
-        basePackages = {"uk.ac.ebi.ega.accession.sample.persistence"}
-)
-public class SampleAccessioningDatabaseServiceTestConfiguration {
-
-    @Autowired
-    private SampleAccessioningRepository repository;
+@EnableJpaRepositories(basePackages = {"uk.ac.ebi.ega.accession.sample.persistence"})
+public class SampleAccessioningConfiguration {
 
     @Autowired
     private ContiguousIdBlockService service;
+    @Autowired
+    private SampleAccessioningRepository repository;
+
+    @Bean
+    @ConfigurationProperties(prefix = "accessioning.sample")
+    public SampleApplicationProperties getSampleApplicationProperties() {
+        return new SampleApplicationProperties();
+    }
 
     @Bean
     public SampleAccessioningService sampleAccessionService() {
-        return new SampleAccessioningService(DecoratedAccessionGenerator.buildPrefixSuffixMonotonicAccessionGenerator(new MonotonicAccessionGenerator<SampleModel>(1000, "sample",
-                "app01", service), "EGAN", ""), sampleAccessioningDatabaseService());
+        return new SampleAccessioningService(sampleAccessionGenerator(), sampleAccessioningDatabaseService());
     }
 
     @Bean
     public SampleAccessioningDatabaseService sampleAccessioningDatabaseService() {
         return new SampleAccessioningDatabaseService(repository);
+    }
+
+    @Bean
+    public DecoratedAccessionGenerator<SampleModel, Long> sampleAccessionGenerator() {
+        SampleApplicationProperties sampleApplicationProperties = getSampleApplicationProperties();
+        return new DecoratedAccessionGenerator<>(new
+                MonotonicAccessionGenerator<>(sampleApplicationProperties.getBlockSize(),
+                sampleApplicationProperties.getCategoryId(), sampleApplicationProperties.getInstanceId(), service),
+                accession -> String.format("%s%0" + sampleApplicationProperties.getAccessionLength() + "d",
+                        sampleApplicationProperties.getAccessionPrefix(), accession),
+                decoratedAccession -> Long.parseLong(decoratedAccession.
+                        replaceAll(sampleApplicationProperties.getAccessionPrefix(), ""))
+        );
     }
 }
