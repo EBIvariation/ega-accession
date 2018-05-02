@@ -35,7 +35,7 @@ import uk.ac.ebi.ega.accession.study.persistence.StudyAccessioningRepository;
 @EnableSpringDataContiguousIdService
 @EntityScan({"uk.ac.ebi.ega.accession.study.persistence"})
 @EnableJpaRepositories(basePackages = {"uk.ac.ebi.ega.accession.study.persistence"})
-public class StudyConfiguration {
+public class StudyAccessioningConfiguration {
 
     @Autowired
     private ContiguousIdBlockService service;
@@ -64,8 +64,8 @@ public class StudyConfiguration {
         return new DecoratedAccessionGenerator<>(new
                 MonotonicAccessionGenerator<>(studyApplicationProperties.getBlockSize(),
                 studyApplicationProperties.getCategoryId(), studyApplicationProperties.getInstanceId(), service),
-                accession -> String.format("%s%0"+studyApplicationProperties.getAccessionLength()+"d",
-                        studyApplicationProperties.getAccessionPrefix(),accession),
+                accession -> String.format("%s%0" + studyApplicationProperties.getAccessionLength() + "d",
+                        studyApplicationProperties.getAccessionPrefix(), accession),
                 decoratedAccession -> Long.parseLong(decoratedAccession.
                         replaceAll(studyApplicationProperties.getAccessionPrefix(), ""))
         );
