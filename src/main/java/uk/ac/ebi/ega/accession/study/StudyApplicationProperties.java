@@ -27,6 +27,8 @@ public class StudyApplicationProperties {
 
     private String accessionPrefix;
 
+    private String accessionLength;
+
     public StudyApplicationProperties() {
     }
 
@@ -62,6 +64,14 @@ public class StudyApplicationProperties {
         this.accessionPrefix = accessionPrefix;
     }
 
+    public String getAccessionLength() {
+        return accessionLength;
+    }
+
+    public void setAccessionLength(String accessionLength) {
+        this.accessionLength = accessionLength;
+    }
+
     @Override
     public String toString() {
         return "StudyApplicationProperties{" +
@@ -69,6 +79,7 @@ public class StudyApplicationProperties {
                 ", categoryId='" + categoryId + '\'' +
                 ", instanceId='" + instanceId + '\'' +
                 ", accessionPrefix='" + accessionPrefix + '\'' +
+                ", accessionLength='" + accessionLength + '\'' +
                 '}';
     }
 }

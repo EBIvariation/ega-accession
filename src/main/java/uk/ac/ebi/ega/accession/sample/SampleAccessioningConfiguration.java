@@ -64,7 +64,8 @@ public class SampleAccessioningConfiguration {
         return new DecoratedAccessionGenerator<>(new
                 MonotonicAccessionGenerator<>(sampleApplicationProperties.getBlockSize(),
                 sampleApplicationProperties.getCategoryId(), sampleApplicationProperties.getInstanceId(), service),
-                accession -> sampleApplicationProperties.getAccessionPrefix() + String.format("%011d", accession),
+                accession -> String.format("%s%0"+sampleApplicationProperties.getAccessionLength()+"d",
+                        sampleApplicationProperties.getAccessionPrefix(),accession),
                 decoratedAccession -> Long.parseLong(decoratedAccession.
                         replaceAll(sampleApplicationProperties.getAccessionPrefix(), ""))
         );

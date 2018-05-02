@@ -48,7 +48,7 @@ public class StudyAccessioningDatabaseServiceTestConfiguration {
     @Bean
     public StudyAccessioningService studyAccessionService() {
         return new StudyAccessioningService(DecoratedAccessionGenerator.buildPrefixSuffixMonotonicAccessionGenerator(new MonotonicAccessionGenerator<StudyModel>(1000, "study",
-                "app01", service), "STUDY_", ""), studyAccessioningDatabaseService());
+                "app01", service), "EGAS", ""), studyAccessioningDatabaseService());
     }
 
     @Bean

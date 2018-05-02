@@ -64,7 +64,8 @@ public class StudyConfiguration {
         return new DecoratedAccessionGenerator<>(new
                 MonotonicAccessionGenerator<>(studyApplicationProperties.getBlockSize(),
                 studyApplicationProperties.getCategoryId(), studyApplicationProperties.getInstanceId(), service),
-                accession -> studyApplicationProperties.getAccessionPrefix() + String.format("%011d",accession),
+                accession -> String.format("%s%0"+studyApplicationProperties.getAccessionLength()+"d",
+                        studyApplicationProperties.getAccessionPrefix(),accession),
                 decoratedAccession -> Long.parseLong(decoratedAccession.
                         replaceAll(studyApplicationProperties.getAccessionPrefix(), ""))
         );

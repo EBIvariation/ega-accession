@@ -48,7 +48,7 @@ public class SampleAccessioningDatabaseServiceTestConfiguration {
     @Bean
     public SampleAccessioningService sampleAccessionService() {
         return new SampleAccessioningService(DecoratedAccessionGenerator.buildPrefixSuffixMonotonicAccessionGenerator(new MonotonicAccessionGenerator<SampleModel>(1000, "sample",
-                "app01", service), "SAMPLE_", ""), sampleAccessioningDatabaseService());
+                "app01", service), "EGAN", ""), sampleAccessioningDatabaseService());
     }
 
     @Bean
